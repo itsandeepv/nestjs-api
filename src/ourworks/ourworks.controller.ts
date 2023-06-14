@@ -1,42 +1,64 @@
-import { Body, Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseInterceptors,
+  UploadedFile,
+  Res,
+  HttpStatus,
+} from '@nestjs/common';
+import { Ourworks } from './ourworks.modal';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { v4 as uuidv4 } from 'uuid';
-import { Ourworks, OurworksModel } from './ourworks.modal';
-import { Model } from 'mongoose';
+import { multerConfig } from '../blogs/multer-config';
+import { CloudinaryService } from 'src/cloundanery/cloudinary.service';
+import { OurworksProvider } from './ourworks.provider';
+// import { Ourworks } from './blogsdata/ourworks.data';
 
- const multerConfig = {
-  storage: diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, 'uploads/');
-    },
-    filename: (req, file, cb) => {
-    //   const fileName = uuidv4();
-      const fileName = Date.now() + '-' + Math.round(Math.random() * 1E9)
-    cb(null, file.fieldname + '-' + fileName+ file.originalname)
-      cb(null, fileName);
-    },
-  }),
-};
+@Controller('ourworks')
+export class Ourworkcontroller {
+  constructor(private ourworkProvider: OurworksProvider) {}
+  //for post
 
-@Controller('formdata')
-export class OurworksController {
-  @Post('upload')
-  @UseInterceptors(FileInterceptor('image', multerConfig))
-  async uploadOurworks(
+  @Post('/add-ourworks')
+  @UseInterceptors(FileInterceptor('siteimages', multerConfig))
+  addBwork(
     @UploadedFile() file,
-    @Body() formData: { name: string; description: string },
-  ){
-    const imageUrl = `http://localhost:3000/uploads/${file.filename}`;    
-    const data = new OurworksModel({
-      name: formData.name,
-      description: formData.description,
-      imageUrl: imageUrl,
-    });
-    const savedData = await data.save();
-    console.log(data ,savedData);
+    @Body()
+    ourwork: {
+      name: string;
+      description: string;
+      websiteLink: string;
+      title: string;
+      review: Number;
+      siteimages: [];
+    },
+  ) {
+    return this.ourworkProvider.addBlogs(ourwork, file);
+  }
 
+  @Put('/update-ourworks/:id')
+  updateworks(@Param('id') ourworkId: any, @Body() ourwork: Ourworks) {
+    return this.ourworkProvider.updateBlogs(ourworkId, ourwork);
+  }
+  @Get('/get-ourworks')
+  findAllBlogs() {
+    return this.ourworkProvider.findAllBlogs();
+  }
 
-    return { formData: data };
+  @Get('/get-ourworks/:id')
+  findworksbyId(@Param('id') workId: any) {
+    return this.ourworkProvider.findBlogsbyId(workId);
+  }
+
+  //for delete
+
+  @Delete('/delete-ourworks/:id')
+  deleteworks(@Param('id') workId: string) {
+    return this.ourworkProvider.deleteBlogs(workId);
   }
 }

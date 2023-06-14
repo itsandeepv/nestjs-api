@@ -12,7 +12,7 @@ export const BlogSchema = new mongoose.Schema(
       required: true,
     },
     image:  {
-        type: String,
+        type: [],
         // required: true,
       },
       description: {

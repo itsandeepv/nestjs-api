@@ -16,10 +16,14 @@ import { Blogs, BlogsModel } from './blogs.modal';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { multerConfig } from './multer-config';
+import { CloudinaryService } from 'src/cloundanery/cloudinary.service';
 // import { Blogs } from './blogsdata/blogs.data';
 
 @Controller('blogs')
 export class Blogscontroller {
+
+  private readonly cloudinaryService: CloudinaryService
+
   constructor(private blogsProvider: BlogsProvider) {}
 
   //for post
@@ -35,9 +39,10 @@ export class Blogscontroller {
       author: string;
       published: string;
       content: string;
-      image: string;
+      image: [];
     },
   ) {
+    
     return this.blogsProvider.addBlogs(blog, file);
   }
 

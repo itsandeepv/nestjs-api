@@ -6,7 +6,7 @@ export interface Ourworks extends Document {
   imageUrl: string;
 }
 
-const ourworksSchema = new Schema({
+export const OurworksSchema = new Schema({
   name: {
     type: String,
     required: true,
@@ -15,10 +15,10 @@ const ourworksSchema = new Schema({
     type: String,
     required: true,
   },
-  imageUrl: {
-    type: String,
-    required: true,
-  },
-});
+  websiteLink: String,
+  review: Number,
+  title: String,
+  siteimages:[],
+},{timestamps:true});
 
-export const OurworksModel = model<Ourworks>('ourworks', ourworksSchema);
+export const OurworksModel = model<Ourworks>('OurWorks', OurworksSchema);
