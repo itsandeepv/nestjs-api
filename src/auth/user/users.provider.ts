@@ -116,7 +116,7 @@ export class UsersProvider {
       email: user.email,
       password: hashpassword,
       address: user.address,
-      role: "admin",
+      role: user.role,
       image: imageurl,
     });
 
